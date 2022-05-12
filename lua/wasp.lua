@@ -8,14 +8,21 @@ vim.g.loaded_wasp = 1
 local wasp = {}
 local gconfig = {
     template_path = function() return 'template.' .. vim.fn.expand("%:e") end, -- either a function or a string
+    lib_path = 'lib', -- either a function or a string
     competitive_companion = nil,
 }
 
--- :Lib
+-- :Lib (requires FZF and ripgrep for now!)
 -- TODO: support Telescope & other fuzzy finders as well
+-- TODO: support something that's not ripgrep (I'm pretty sure you can list files with `find`??)
 local function lib_copy()
+    local path = gconfig.lib_path
+    if type(path) == "function" then
+        path = path()
+    end
+
     vim.fn['fzf#run'](vim.fn['fzf#wrap'](vim.fn['fzf#vim#with_preview']({
-        source = 'rg lib/ --files',
+        source = 'rg ' .. path .. ' --files',
         sink = 'read',
         options = { '--prompt', 'Lib> ', },
     })))
