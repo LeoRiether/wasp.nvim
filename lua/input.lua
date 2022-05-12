@@ -6,6 +6,9 @@
 --
 
 local M = {}
+local gconfig = {
+    file = 'inp',
+}
 
 local function write(filename, content)
     local file = io.open(filename, "w")
@@ -13,7 +16,9 @@ local function write(filename, content)
     file:close()
 end
 
-local function input(file, problem)
+local function input(problem)
+    local file = gconfig.file
+
     -- Ensure we have a buffer called `file` in the first place
     if vim.fn.bufnr(file) == -1 then
         vim.api.nvim_err_writeln("Wasp: file buffer not found")
@@ -58,10 +63,17 @@ local function create_server(host, port, on_connect)
     return server
 end
 
-function M.setup(config)
-    local file = config.file or "inp"
+local function on_receive(body)
+    local idx = body:match("^.*()\r\n") -- copied from p00f/cphelper.nvim
+    if idx == nil then return end -- ensure the message is in the right format
+    body = body:sub(idx + 1)
+    vim.schedule(function()
+        input(vim.json.decode(body))
+    end)
+end
 
-    write('wasp.setup.txt', "woah!")
+function M.setup(config)
+    gconfig = vim.tbl_extend('force', gconfig, config)
 
     create_server('127.0.0.1', 10043, function(sock)
         local buffer = {}
@@ -71,20 +83,12 @@ function M.setup(config)
                 buffer[#buffer+1] = chunk
             else  -- EOF (stream closed).
                 local body = table.concat(buffer, "")
-                local idx = body:match("^.*()\r\n") -- copied from p00f/cphelper.nvim
-                if idx == nil then return end -- ensure the message is in the right format
-                body = body:sub(idx + 1)
-                vim.schedule(function()
-                    input(file, vim.json.decode(body))
-                end)
-
+                on_receive(body)
                 sock:close() -- Always close handles to avoid leaks.
                 buffer = {}
             end
         end)
     end)
-
-    vim.api.nvim_create_user_command('Input', input, { nargs=1 })
 end
 
 return M

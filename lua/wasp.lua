@@ -6,9 +6,13 @@ if vim.g.loaded_wasp == 1 then return end
 vim.g.loaded_wasp = 1
 
 local wasp = {}
+local gconfig = {
+    template_path = function() return 'template.' .. vim.fn.expand("%:e") end, -- either a function or a string
+    competitive_companion = nil,
+}
 
 -- :Lib
--- TODO: support Telescope & other fuzzy finders as well 
+-- TODO: support Telescope & other fuzzy finders as well
 local function lib_copy()
     vim.fn['fzf#run'](vim.fn['fzf#wrap'](vim.fn['fzf#vim#with_preview']({
         source = 'rg lib/ --files',
@@ -18,17 +22,19 @@ local function lib_copy()
 end
 
 -- :Template
-local function template(path)
+local function template()
+    local path = gconfig.template_path
     local t = type(path)
     if t == "function" then
         path = path()
     end
+
     vim.cmd(string.format([[
         normal! ggdG
-        silent execute "0r '%s'"
+        silent execute "0r %s"
         redraw!
         normal! gg
-    ]]), path)
+    ]], path))
 end
 
 -- Keymaps
@@ -48,8 +54,11 @@ end
 -- Commands
 -- TODO: make these configurable
 function wasp.setup(config)
-    config.template_path = config.template_path or
-        function() return 'template.' .. vim.fn.expand("%:e") end
+    vim.validate {
+        config = { config, 'table' }
+    }
+
+    gconfig = vim.tbl_deep_extend('force', gconfig, config)
 
     local command = vim.api.nvim_create_user_command
     command('Template', template, {})
@@ -59,7 +68,7 @@ function wasp.setup(config)
     command('Out', 'split term://./out', {})
     command('Run', 'execute "Comp | Test"', {})
 
-    if config.competitive_companion ~= nil then
+    if gconfig.competitive_companion ~= nil then
         require('input').setup(config.competitive_companion)
     end
 end
