@@ -33,6 +33,8 @@ use 'LeoRiether/wasp.nvim'
 
 ## Example configuration
 ```lua
+if not vim.fn.getcwd():match('/my-competitive-programming-folder') then return end
+
 require('wasp').setup {
     template_path = function() return 'lib/template.' .. vim.fn.expand("%:e") end,
     lib_path = 'lib/',
