@@ -44,6 +44,11 @@ local function template()
     ]], path))
 end
 
+local function run()
+    vim.cmd('Comp')
+    vim.cmd('Test')
+end
+
 -- Keymaps
 function wasp.set_default_keymaps()
     local map = vim.api.nvim_set_keymap
@@ -73,7 +78,7 @@ function wasp.setup(config)
     command('Comp', 'execute "!./comp " . @%', {})
     command('Test', 'execute "!./test"', {})
     command('Out', 'split term://./out', {})
-    command('Run', 'execute "Comp | Test"', {})
+    command('Run', run, {})
 
     if gconfig.competitive_companion ~= nil then
         require('input').setup(config.competitive_companion)
