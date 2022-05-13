@@ -1,5 +1,7 @@
 # wasp.nvim
 
+> Disclaimer: wasp.nvim is still in alpha. Expect breaking changes!
+
 wasp.nvim is a plugin for Neovim that automate many tasks related to
 Competitive/Sports Programming, such as copying the template, compiling and
 testing the program, copying library files, and typing sample inputs.
