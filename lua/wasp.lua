@@ -81,7 +81,7 @@ function wasp.setup(config)
     command('Run', run, {})
 
     if gconfig.competitive_companion ~= nil then
-        require('input').setup(config.competitive_companion)
+        require('wasp.input').setup(config.competitive_companion)
     end
 end
 
