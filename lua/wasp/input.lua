@@ -6,7 +6,7 @@
 --
 
 local M = {}
-local gconfig = {
+local opts = {
     file = 'inp',
 }
 
@@ -17,7 +17,7 @@ local function write(filename, content)
 end
 
 local function input(problem)
-    local file = gconfig.file
+    local file = opts.file
 
     -- Ensure we have a buffer called `file` in the first place
     if vim.fn.bufnr(file) == -1 then
@@ -72,8 +72,8 @@ local function on_receive(body)
     end)
 end
 
-function M.setup(config)
-    gconfig = vim.tbl_extend('force', gconfig, config)
+function M.setup(o)
+    opts = vim.tbl_extend('force', opts, o)
 
     create_server('127.0.0.1', 10043, function(sock)
         local buffer = {}
