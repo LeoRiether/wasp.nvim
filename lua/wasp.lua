@@ -5,18 +5,24 @@
 if vim.g.loaded_wasp == 1 then return end
 vim.g.loaded_wasp = 1
 
+local util = require('wasp.util')
+
 local wasp = {}
-local gconfig = {
+local opts = {
     template_path = function() return 'template.' .. vim.fn.expand("%:e") end, -- either a function or a string
     lib_path = 'lib', -- either a function or a string
     competitive_companion = nil,
+    graph = {
+        dot = 'dot',
+        viewer = util.default_viewer()
+    }
 }
 
 -- :Lib (requires FZF and ripgrep for now!)
 -- TODO: support Telescope & other fuzzy finders as well
 -- TODO: support something that's not ripgrep (I'm pretty sure you can list files with `find`??)
 local function lib_copy()
-    local path = gconfig.lib_path
+    local path = opts.lib_path
     if type(path) == "function" then
         path = path()
     end
@@ -30,7 +36,7 @@ end
 
 -- :Template
 local function template()
-    local path = gconfig.template_path
+    local path = opts.template_path
     local t = type(path)
     if t == "function" then
         path = path()
@@ -66,12 +72,12 @@ end
 
 -- Commands
 -- TODO: make these configurable
-function wasp.setup(config)
+function wasp.setup(o)
     vim.validate {
-        config = { config, 'table' }
+        o = { o, 'table' }
     }
 
-    gconfig = vim.tbl_deep_extend('force', gconfig, config)
+    opts = vim.tbl_deep_extend('force', opts, o)
 
     local command = vim.api.nvim_create_user_command
     command('WaspTemplate', template, {})
@@ -81,9 +87,11 @@ function wasp.setup(config)
     command('WaspOut', 'split term://./out', {})
     command('WaspRun', run, {})
 
-    if gconfig.competitive_companion ~= nil then
-        require('wasp.input').setup(config.competitive_companion)
+    if opts.competitive_companion ~= nil then
+        require('wasp.input').setup(opts.competitive_companion)
     end
+
+    require('wasp.viewgraph').setup(opts.graph)
 end
 
 return wasp
