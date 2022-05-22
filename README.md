@@ -9,6 +9,7 @@ testing the program, copying library files, and typing sample inputs.
 ## Dependencies
  - Neovim ≥0.7
  - fzf, fzf.vim and ripgrep for the `Lib` command
+ - graphviz for `:WaspViewGraph`
 
 ## Installing
 You can install wasp.nvim with your favorite plugin manager, such as vim-plug or
@@ -32,6 +33,7 @@ use 'LeoRiether/wasp.nvim'
 - `:Out` -- runs `./out` in a terminal window
 - `:Run` -- runs `:Comp`, then `Test`
 - [Competitive Companion](https://github.com/jmerle/competitive-companion) integration -- copy test cases to an input file
+- `:WaspViewGraph` -- renders an image of a graph with graphviz and opens it
 
 ## Example configuration
 ```lua
@@ -52,3 +54,4 @@ require('wasp').set_default_keymaps()
 - `<leader>test` to `:Test`
 - `<leader>out` to `:Out`
 - `<leader>run` to `:Run`
+- `<leader>vg` to `:WaspViewGraph`
