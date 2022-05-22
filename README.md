@@ -24,13 +24,13 @@ use 'LeoRiether/wasp.nvim'
 ```
 
 ## Features
-- `:Template` -- copies the template file into the current buffer 
-- `:Lib` -- opens fzf over the files in `lib/` (or whatever path you configure)
+- `:WaspTemplate` -- copies the template file into the current buffer 
+- `:WaspLib` -- opens fzf over the files in `lib/` (or whatever path you configure)
   and writes the selected one to the buffer
-- `:Comp` -- runs the `./comp` script with the current file as an argument 
-- `:Test` -- runs the `./test` script
-- `:Out` -- runs `./out` in a terminal window
-- `:Run` -- runs `:Comp`, then `Test`
+- `:WaspComp` -- runs the `./comp` script with the current file as an argument 
+- `:WaspTest` -- runs the `./test` script
+- `:WaspOut` -- runs `./out` in a terminal window
+- `:WaspRun` -- runs `:WaspComp`, then `:WaspTest`
 - [Competitive Companion](https://github.com/jmerle/competitive-companion) integration -- copy test cases to an input file
 
 ## Example configuration
@@ -46,9 +46,9 @@ require('wasp').set_default_keymaps()
 ```
 
 `set_default_keymaps` will bind:
-- `<leader>tem` to `:Template`
-- `<leader>lib` to `:Lib`
-- `<leader>comp` to `:Comp`
-- `<leader>test` to `:Test`
-- `<leader>out` to `:Out`
-- `<leader>run` to `:Run`
+- `<leader>tem` to `:WaspTemplate`
+- `<leader>lib` to `:WaspLib`
+- `<leader>comp` to `:WaspComp`
+- `<leader>test` to `:WaspTest`
+- `<leader>out` to `:WaspOut`
+- `<leader>run` to `:WaspRun`

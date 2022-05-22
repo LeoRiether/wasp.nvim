@@ -56,11 +56,12 @@ function wasp.set_default_keymaps()
         map('n', '<leader>'..lhs, rhs, {noremap=true})
     end
 
-    lmap('comp', ':Comp<cr>')
-    lmap('test', ':Test<cr>')
-    lmap('run', ':Run<cr>')
-    lmap('lib', ':Lib<cr>')
-    lmap('tem', ':Template<cr>')
+    lmap('comp', ':WaspComp<cr>')
+    lmap('test', ':WaspTest<cr>')
+    lmap('run', ':WaspRun<cr>')
+    lmap('lib', ':WaspLib<cr>')
+    lmap('tem', ':WaspTemplate<cr>')
+    lmap('vg', ':WaspViewGraph<cr>')
 end
 
 -- Commands
@@ -73,12 +74,12 @@ function wasp.setup(config)
     gconfig = vim.tbl_deep_extend('force', gconfig, config)
 
     local command = vim.api.nvim_create_user_command
-    command('Template', template, {})
-    command('Lib', lib_copy, {})
-    command('Comp', 'execute "!./comp " . @%', {})
-    command('Test', 'execute "!./test"', {})
-    command('Out', 'split term://./out', {})
-    command('Run', run, {})
+    command('WaspTemplate', template, {})
+    command('WaspLib', lib_copy, {})
+    command('WaspComp', 'execute "!./comp " . @%', {})
+    command('WaspTest', 'execute "!./test"', {})
+    command('WaspOut', 'split term://./out', {})
+    command('WaspRun', run, {})
 
     if gconfig.competitive_companion ~= nil then
         require('wasp.input').setup(config.competitive_companion)
