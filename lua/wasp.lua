@@ -18,12 +18,15 @@ local opts = {
     }
 }
 
--- :Lib (requires FZF and ripgrep for now!)
+-- :WaspLib (requires FZF and ripgrep for now!)
 -- TODO: support Telescope & other fuzzy finders as well
 -- TODO: support something that's not ripgrep (I'm pretty sure you can list files with `find`??)
-local function lib_copy()
+local function lib_copy(args)
+    print(args.args) 
     local path = opts.lib_path
-    if type(path) == "function" then
+    if args.args ~= nil and args.args ~= "" then
+        path = args.args
+    elseif type(path) == "function" then
         path = path()
     end
 
@@ -34,7 +37,7 @@ local function lib_copy()
     })))
 end
 
--- :Template
+-- :WaspTemplate
 local function template()
     local path = opts.template_path
     local t = type(path)
@@ -81,7 +84,7 @@ function wasp.setup(o)
 
     local command = vim.api.nvim_create_user_command
     command('WaspTemplate', template, {})
-    command('WaspLib', lib_copy, {})
+    command('WaspLib', lib_copy, { nargs='?' })
     command('WaspComp', 'execute "!./comp " . @%', {})
     command('WaspTest', 'execute "!./test"', {})
     command('WaspOut', 'split term://./out', {})

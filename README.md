@@ -26,7 +26,8 @@ use 'LeoRiether/wasp.nvim'
 ## Features
 - `:WaspTemplate` -- copies the template file into the current buffer 
 - `:WaspLib` -- opens fzf over the files in `lib/` (or whatever path you configure)
-  and writes the selected one to the buffer
+  and writes the selected one to the buffer. If called with an argument, like `:WaspLib anotherdir`,
+  fzf will search `anotherdir` instead of the default lib directory.
 - `:WaspComp` -- runs the `./comp` script with the current file as an argument 
 - `:WaspTest` -- runs the `./test` script
 - `:WaspOut` -- runs `./out` in a terminal window
