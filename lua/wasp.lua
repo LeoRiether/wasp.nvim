@@ -54,8 +54,8 @@ local function template()
 end
 
 local function run()
-    vim.cmd('Comp')
-    vim.cmd('Test')
+    vim.cmd('WaspComp')
+    vim.cmd('WaspTest')
 end
 
 -- Keymaps
