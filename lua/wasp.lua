@@ -10,7 +10,10 @@ local util = require('wasp.util')
 local wasp = {}
 local opts = {
     template_path = function() return 'template.' .. vim.fn.expand("%:e") end, -- either a function or a string
-    lib_path = 'lib', -- either a function or a string
+    lib = {
+        finder = 'fzf',
+        path = 'lib',
+    },
     competitive_companion = nil,
     graph = {
         dot = 'dot',
@@ -18,23 +21,48 @@ local opts = {
     }
 }
 
--- :WaspLib (requires FZF and ripgrep for now!)
--- TODO: support Telescope & other fuzzy finders as well
--- TODO: support something that's not ripgrep (I'm pretty sure you can list files with `find`??)
-local function lib_copy(args)
-    print(args.args) 
-    local path = opts.lib_path
+local function resolve_lib_path(args)
+    local path = opts.lib.path
     if args.args ~= nil and args.args ~= "" then
         path = args.args
     elseif type(path) == "function" then
         path = path()
     end
+    return path
+end
 
+
+-- NOTE: :WaspLib (requires either {fzf+fzf.vim+rg} or {telescope})
+-- todo: support something that's not ripgrep (i'm pretty sure you can list files with `find`??)
+local function fzf_lib_copy(args)
+    local path = resolve_lib_path(args)
     vim.fn['fzf#run'](vim.fn['fzf#wrap'](vim.fn['fzf#vim#with_preview']({
         source = 'rg ' .. path .. ' --files',
         sink = 'read',
         options = { '--prompt', 'Lib> ', },
     })))
+end
+
+local function telescope_lib_copy(args)
+    local path = resolve_lib_path(args)
+    local telescope = require'telescope.builtin'
+    local actions = require'telescope.actions'
+    local action_state = require'telescope.actions.state'
+
+    local function select(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        vim.cmd('read ' .. path .. '/' .. selection.value)
+    end
+
+    telescope.find_files {
+        cwd = path,
+        prompt_title = 'Lib',
+        attach_mappings = function(_, _)
+            actions.select_default:replace(select)
+            return true
+        end,
+    }
 end
 
 -- :WaspTemplate
@@ -84,7 +112,13 @@ function wasp.setup(o)
 
     local command = vim.api.nvim_create_user_command
     command('WaspTemplate', template, {})
-    command('WaspLib', lib_copy, { nargs='?' })
+
+    if opts.lib.finder == 'fzf' then
+        command('WaspLib', fzf_lib_copy, { nargs='?' })
+    else
+        command('WaspLib', telescope_lib_copy, { nargs='?' })
+    end
+
     command('WaspComp', 'execute "!./comp " . @%', {})
     command('WaspTest', 'execute "!./test"', {})
     command('WaspOut', 'split term://./out', {})

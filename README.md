@@ -8,7 +8,11 @@ testing the program, copying library files, and typing sample inputs.
  
 ## Dependencies
  - Neovim ≥0.7
- - fzf, fzf.vim and ripgrep for the `Lib` command
+ - either {[fzf](https://github.com/junegunn/fzf),
+   [fzf vim](https://github.com/junegunn/fzf.vim) and
+   [ripgrep](https://github.com/BurntSushi/ripgrep)} or
+   {[telescope](https://github.com/nvim-telescope/telescope.nvim)} for the `Lib`
+   command
 
 ## Installing
 You can install wasp.nvim with your favorite plugin manager, such as vim-plug or
@@ -40,7 +44,10 @@ if not vim.fn.getcwd():match('/my-competitive-programming-folder') then return e
 
 require('wasp').setup {
     template_path = function() return 'lib/template.' .. vim.fn.expand("%:e") end,
-    lib_path = 'lib/',
+    lib = {
+        finder='fzf', -- or 'telescope'
+        path='lib/',
+    },
     competitive_companion = { file = 'inp' },
 }
 require('wasp').set_default_keymaps()
