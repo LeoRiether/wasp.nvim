@@ -51,8 +51,12 @@ local function telescope_lib_copy(args)
 
     local function select(prompt_bufnr)
         local selection = action_state.get_selected_entry()
-        actions.close(prompt_bufnr)
-        vim.cmd('read ' .. path .. '/' .. selection.value)
+        if selection ~= nil then
+            actions.close(prompt_bufnr)
+            vim.cmd('read ' .. path .. '/' .. selection.value)
+        else
+            print("Nothing currently selected!")
+        end
     end
 
     telescope.find_files {
